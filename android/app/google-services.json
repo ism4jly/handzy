@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "559451804222",
+    "project_id": "handzy-d4623",
+    "storage_bucket": "handzy-d4623.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559451804222:android:288d3939efb68e6252b76f",
+        "android_client_info": {
+          "package_name": "com.handzy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2W1OIUGmSEx2L-cq45aJv-0oBr3Zd7MU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

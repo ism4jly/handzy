@@ -57,6 +57,7 @@ export default function Login() {
 
         <Input
           placeholder="Email"
+          placeholderTextColor="#fff"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -64,6 +65,7 @@ export default function Login() {
         />
         <Input
           placeholder="Senha"
+          placeholderTextColor="#fff"
           secureTextEntry
           autoCapitalize="none"
           value={password}
@@ -93,12 +95,14 @@ export default function Login() {
 
       <Input
         placeholder="Seu nome"
+        placeholderTextColor="#fff"
         autoCapitalize="none"
         value={name}
         onChangeText={text => setName(text)}
       />
       <Input
         placeholder="Email"
+        placeholderTextColor="#fff"
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
@@ -106,6 +110,7 @@ export default function Login() {
       />
       <Input
         placeholder="Senha"
+        placeholderTextColor="#fff"
         secureTextEntry
         autoCapitalize="none"
         value={password}

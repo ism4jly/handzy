@@ -1,13 +1,31 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthContext = createContext({});
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadStorage() {
+      const storageUser = await AsyncStorage.getItem('@handzy');
+
+      if (storageUser) {
+        setUser(JSON.parse(storageUser));
+        setLoading(false);
+      }
+
+      setLoading(false);
+    }
+
+    loadStorage();
+  }, []);
 
   async function signUp(email, password, name) {
     setLoadingAuth(true);
@@ -31,6 +49,7 @@ function AuthProvider({ children }) {
             };
 
             setUser(data);
+            storageUser(data);
             setLoadingAuth(false);
           });
       })
@@ -56,6 +75,7 @@ function AuthProvider({ children }) {
         };
 
         setUser(data);
+        storageUser(data);
         setLoadingAuth(false);
       })
       .catch(error => {
@@ -64,9 +84,13 @@ function AuthProvider({ children }) {
       });
   }
 
+  async function storageUser(data) {
+    await AsyncStorage.setItem('@handzy', JSON.stringify(data));
+  }
+
   return (
     <AuthContext.Provider
-      value={{ signed: !!user, signUp, signIn, loadingAuth }}
+      value={{ signed: !!user, signUp, signIn, loadingAuth, loading }}
     >
       {children}
     </AuthContext.Provider>

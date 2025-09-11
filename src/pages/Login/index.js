@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { ActivityIndicator } from 'react-native';
 
 import {
   Container,
@@ -14,11 +15,14 @@ import {
   SignUpLink,
 } from './styles';
 
+import { AuthContext } from '../../contexts/auth';
+
 export default function Login() {
   const [login, setLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { signUp, signIn, loadingAuth } = useContext(AuthContext);
 
   function toggleLogin() {
     setLogin(!login);
@@ -27,18 +31,22 @@ export default function Login() {
     setPassword('');
   }
 
-  function handleSignIn() {
+  async function handleSignIn() {
     if (email === '' || password === '') {
       alert('Preencha todos os campos');
       return;
     }
+
+    await signIn(email, password);
   }
 
-  function handleSignUp() {
+  async function handleSignUp() {
     if (name === '' || email === '' || password === '') {
       alert('Preencha todos os campos');
       return;
     }
+
+    await signUp(email, password, name);
   }
 
   if (login) {
@@ -63,7 +71,11 @@ export default function Login() {
         />
 
         <Button onPress={handleSignIn}>
-          <ButtonText>Entrar</ButtonText>
+          {loadingAuth ? (
+            <ActivityIndicator size={20} color="#FFF" />
+          ) : (
+            <ButtonText>Entrar</ButtonText>
+          )}
         </Button>
 
         <SignUpContainer>
@@ -101,7 +113,11 @@ export default function Login() {
       />
 
       <Button onPress={handleSignUp}>
-        <ButtonText>Cadastrar</ButtonText>
+        {loadingAuth ? (
+          <ActivityIndicator size={20} color="#FFF" />
+        ) : (
+          <ButtonText>Cadastrar</ButtonText>
+        )}
       </Button>
 
       <Link>

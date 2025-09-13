@@ -1,12 +1,17 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-function Search(){
-    return(
-        <View>
-            <Text>Procurar Page</Text>
-        </View>
-    )
+import { Container } from './styles';
+
+import Header from '../../components/Header';
+
+function Search() {
+  return (
+    <Container>
+      <Header />
+      <Text style={{ color: '#fff' }}>Search</Text>
+    </Container>
+  );
 }
 
 export default Search;

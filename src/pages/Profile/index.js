@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { View, Text, Button } from 'react-native';
 
+import { Container } from './styles';
+
 import { AuthContext } from '../../contexts/auth';
 
 function Profile() {
@@ -11,10 +13,10 @@ function Profile() {
   }
 
   return (
-    <View>
-      <Text>Home Page</Text>
+    <Container>
+      <Text style={{ color: '#fff' }}>Home Page</Text>
       <Button title="Sair" onPress={() => handleSignOut()} />
-    </View>
+    </Container>
   );
 }
 

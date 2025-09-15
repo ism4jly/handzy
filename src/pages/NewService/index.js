@@ -35,7 +35,7 @@ function NewService() {
     await firestore()
       .collection('services')
       .add({
-        createdAt: new Date(),
+        created: new Date(),
         autor: user?.nome,
         title: title,
         description: description,

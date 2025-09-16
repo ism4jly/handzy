@@ -1,7 +1,16 @@
 import React, { useState, createContext, useEffect } from 'react';
-
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from '@react-native-firebase/auth';
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+} from '@react-native-firebase/firestore';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,6 +20,9 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const auth = getAuth();
+  const db = getFirestore();
 
   useEffect(() => {
     async function loadStorage() {
@@ -30,62 +42,56 @@ function AuthProvider({ children }) {
   async function signUp(email, password, name) {
     setLoadingAuth(true);
 
-    await auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(async value => {
-        let uid = value.user.uid;
-        await firestore()
-          .collection('users')
-          .doc(uid)
-          .set({
-            nome: name,
-            createdAt: new Date(),
-          })
-          .then(() => {
-            let data = {
-              uid: uid,
-              nome: name,
-              email: value.user.email,
-            };
+    try {
+      const value = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = value.user.uid;
 
-            setUser(data);
-            storageUser(data);
-            setLoadingAuth(false);
-          });
-      })
-      .catch(error => {
-        console.log(error);
-        setLoadingAuth(false);
+      await setDoc(doc(db, 'users', uid), {
+        nome: name,
+        createdAt: new Date(),
       });
+
+      let data = {
+        uid: uid,
+        nome: name,
+        email: value.user.email,
+      };
+
+      setUser(data);
+      storageUser(data);
+      setLoadingAuth(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingAuth(false);
+    }
   }
 
   async function signIn(email, password) {
     setLoadingAuth(true);
 
-    await auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(async value => {
-        let uid = value.user.uid;
-        let userProfile = await firestore().collection('users').doc(uid).get();
+    try {
+      const value = await signInWithEmailAndPassword(auth, email, password);
+      const uid = value.user.uid;
 
-        let data = {
-          uid: uid,
-          nome: userProfile.data().nome,
-          email: value.user.email,
-        };
+      const userProfile = await getDoc(doc(db, 'users', uid));
 
-        setUser(data);
-        storageUser(data);
-        setLoadingAuth(false);
-      })
-      .catch(error => {
-        console.log(error);
-        setLoadingAuth(false);
-      });
+      let data = {
+        uid: uid,
+        nome: userProfile.data().nome,
+        email: value.user.email,
+      };
+
+      setUser(data);
+      storageUser(data);
+      setLoadingAuth(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingAuth(false);
+    }
   }
 
-  async function signOut() {
-    await auth().signOut();
+  async function signOutUser() {
+    await signOut(auth);
     await AsyncStorage.clear().then(() => {
       setUser(null);
     });
@@ -103,7 +109,7 @@ function AuthProvider({ children }) {
         signIn,
         loadingAuth,
         loading,
-        signOut,
+        signOut: signOutUser,
         user,
       }}
     >

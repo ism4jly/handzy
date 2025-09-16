@@ -4,11 +4,19 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../contexts/auth';
-import firestore from '@react-native-firebase/firestore';
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+} from '@react-native-firebase/firestore';
 
 import { Container, ButtonPost, ListServices } from './styles';
 
 import Header from '../../components/Header';
+import ServicesList from '../../components/ServicesList';
 
 function Home() {
   const { user } = useContext(AuthContext);
@@ -21,27 +29,31 @@ function Home() {
     useCallback(() => {
       let isActive = true;
 
-      function fetchServices() {
-        firestore()
-          .collection('services')
-          .orderBy('created', 'desc')
-          .get()
-          .then(snapshot => {
-            if (isActive) {
-              setServices([]);
-              const servicesList = [];
+      async function fetchServices() {
+        try {
+          const db = getFirestore();
+          const servicesRef = collection(db, 'services');
+          const q = query(servicesRef, orderBy('created', 'desc'));
 
-              snapshot.docs.map(u => {
-                servicesList.push({
-                  ...u.data(),
-                  id: u.id,
-                });
+          const snapshot = await getDocs(q);
+
+          if (isActive) {
+            const servicesList = [];
+
+            snapshot.forEach(doc => {
+              servicesList.push({
+                ...doc.data(),
+                id: doc.id,
               });
+            });
 
-              setServices(servicesList);
-              setLoading(false);
-            }
-          });
+            setServices(servicesList);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Erro ao buscar serviços: ', error);
+          setLoading(false);
+        }
       }
 
       fetchServices();
@@ -65,7 +77,9 @@ function Home() {
       ) : (
         <ListServices
           data={services}
-          renderItem={({ item }) => <Text>{item.title}</Text>}
+          renderItem={({ item }) => (
+            <ServicesList data={item} userId={user?.uid} />
+          )}
         />
       )}
 

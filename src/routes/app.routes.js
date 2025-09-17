@@ -40,44 +40,48 @@ function AppRoutes() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarHideOnKeyboard: true,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: '#22C55E',
-        tabBarInactiveTintColor: '#D1D5DB',
-
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: '#3b82f6',
+        tabBarInactiveTintColor: '#6b7280',
         tabBarStyle: {
-          backgroundColor: '#111827',
+          backgroundColor: '#fff',
           borderTopWidth: 0,
+          elevation: 3,
+          height: 60,
+          paddingBottom: 5,
         },
       }}
     >
       <Tab.Screen
-        name="HomeTab"
+        name="Home"
         component={StackRoutes}
         options={{
-          tabBarIcon: ({ color, size }) => {
-            return <Feather name="home" color={color} size={size} />;
-          },
+          tabBarLabel: 'Início',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="home" color={color} size={size} />
+          ),
         }}
       />
 
       <Tab.Screen
-        name="Search"
+        name="Agendamentos"
         component={Search}
         options={{
-          tabBarIcon: ({ color, size }) => {
-            return <Feather name="search" color={color} size={size} />;
-          },
+          tabBarLabel: 'Agendamentos',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="calendar" color={color} size={size} />
+          ),
         }}
       />
 
       <Tab.Screen
-        name="Profile"
+        name="Perfil"
         component={Profile}
         options={{
-          tabBarIcon: ({ color, size }) => {
-            return <Feather name="user" color={color} size={size} />;
-          },
+          tabBarLabel: 'Perfil',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="user" color={color} size={size} />
+          ),
         }}
       />
     </Tab.Navigator>

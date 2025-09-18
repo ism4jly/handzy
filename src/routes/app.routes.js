@@ -24,10 +24,10 @@ function StackRoutes() {
         name="NewService"
         component={NewService}
         options={{
-          title: 'Novo serviço',
-          headerTintColor: '#fff',
+          title: 'Criar serviço',
+          headerTintColor: '#111827',
           headerStyle: {
-            backgroundColor: '#111827',
+            backgroundColor: '#e5e7eb',
           },
         }}
       />

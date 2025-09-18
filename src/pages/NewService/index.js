@@ -1,27 +1,44 @@
 import React, { useState, useContext } from 'react';
-
-import { Container, Input, Button, ButtonText } from './styles';
-
+import { ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
+import { Picker } from '@react-native-picker/picker';
+
 import { AuthContext } from '../../contexts/auth';
+import {
+  Container,
+  Card,
+  Title,
+  Subtitle,
+  Label,
+  Input,
+  Row,
+  InputSmall,
+  Button,
+  ButtonText,
+  Column,
+} from './styles';
 
 function NewService() {
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
+
   const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [duration, setDuration] = useState('');
+  const [location, setLocation] = useState('');
 
   async function handleService() {
-    if (title === '' || description === '' || price === '') {
-      alert('Preencha todos os campos');
+    if (!title || !category || !description || !price) {
+      Alert.alert('Atenção', 'Preencha todos os campos obrigatórios.');
       return;
     }
-    let avatarUrl = null;
 
+    let avatarUrl = null;
     try {
       let response = await storage
         .ref('users')
@@ -37,52 +54,106 @@ function NewService() {
       .add({
         created: new Date(),
         autor: user?.nome,
-        title: title,
-        description: description,
-        price: price,
-        avatarUrl: avatarUrl,
+        title,
+        category,
+        description,
+        price,
+        duration,
+        location,
+        avatarUrl,
         userId: user?.uid,
       })
       .then(() => {
-        alert('Serviço cadastrado com sucesso!');
+        Alert.alert('Sucesso', 'Serviço cadastrado com sucesso!');
         setTitle('');
+        setCategory('');
         setDescription('');
         setPrice('');
+        setDuration('');
+        setLocation('');
+        navigation.goBack();
       })
       .catch(error => console.log(error));
-
-    navigation.goBack();
   }
 
   return (
     <Container>
-      <Input
-        placeholder="Título do serviço"
-        placeholderTextColor="#9CA3AF"
-        value={title}
-        onChangeText={text => setTitle(text)}
-      />
-      <Input
-        placeholder="Descrição"
-        placeholderTextColor="#9CA3AF"
-        value={description}
-        onChangeText={text => setDescription(text)}
-        multiline={true}
-        maxLength={300}
-        style={{ height: 200, textAlignVertical: 'top' }}
-      />
-      <Input
-        placeholder="Preço"
-        placeholderTextColor="#9CA3AF"
-        keyboardType="numeric"
-        value={price}
-        onChangeText={text => setPrice(text)}
-        maxLength={10}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Title>Informações do Serviço</Title>
+        <Subtitle>
+          Preencha os detalhes do seu serviço para que clientes possam
+          encontrá-lo
+        </Subtitle>
 
-      <Button onPress={() => handleService()}>
-        <ButtonText>Cadastrar Serviço</ButtonText>
-      </Button>
+        <Card>
+          <Label>Título do Serviço *</Label>
+          <Input
+            placeholder="Ex: Instalação de Ar Condicionado"
+            value={title}
+            onChangeText={setTitle}
+          />
+
+          <Label>Categoria *</Label>
+          <Picker
+            selectedValue={category}
+            onValueChange={itemValue => setCategory(itemValue)}
+            style={{
+              backgroundColor: '#f3f4f6',
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          >
+            <Picker.Item label="Selecione uma categoria" value="" />
+            <Picker.Item label="Técnico" value="tecnico" />
+            <Picker.Item label="Limpeza" value="limpeza" />
+            <Picker.Item label="Beleza" value="beleza" />
+            <Picker.Item label="Educação" value="educacao" />
+            <Picker.Item label="Informática" value="ti" />
+            <Picker.Item label="Transporte" value="transporte" />
+          </Picker>
+
+          <Label>Descrição *</Label>
+          <Input
+            placeholder="Descreva detalhadamente seu serviço, experiência e diferenciais..."
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            style={{ height: 100, textAlignVertical: 'top' }}
+          />
+
+          <Row>
+            <Column>
+              <Label>Preço</Label>
+              <InputSmall
+                placeholder="R$ 120"
+                value={price}
+                onChangeText={setPrice}
+                keyboardType="numeric"
+              />
+            </Column>
+
+            <Column>
+              <Label>Duração</Label>
+              <InputSmall
+                placeholder="1 hora"
+                value={duration}
+                onChangeText={setDuration}
+              />
+            </Column>
+          </Row>
+
+          <Label>Localização</Label>
+          <Input
+            placeholder="Ex: São Paulo, SP - Atendo toda cidade"
+            value={location}
+            onChangeText={setLocation}
+          />
+
+          <Button onPress={() => handleService()}>
+            <ButtonText>Cadastrar Serviço</ButtonText>
+          </Button>
+        </Card>
+      </ScrollView>
     </Container>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Touchable, TouchableOpacity } from 'react-native';
 import { Card, IconContainer, IconText, SubText } from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -20,9 +20,9 @@ const data = [
   },
   {
     id: '3',
-    name: 'Manutenção',
-    desc: 'Reparos em geral',
-    icon: 'hammer',
+    name: 'Informática',
+    desc: 'Serviços de informática',
+    icon: 'cpu',
     color: '#f97316',
   },
   {
@@ -55,13 +55,15 @@ export default function Categorias() {
       numColumns={2}
       keyExtractor={item => item.id}
       renderItem={({ item }) => (
-        <Card>
-          <IconContainer style={{ backgroundColor: item.color }}>
-            <Feather name={item.icon} size={22} color="#fff" />
-          </IconContainer>
-          <IconText>{item.name}</IconText>
-          <SubText>{item.desc}</SubText>
-        </Card>
+        <TouchableOpacity>
+          <Card>
+            <IconContainer style={{ backgroundColor: item.color }}>
+              <Feather name={item.icon} size={22} color="#fff" />
+            </IconContainer>
+            <IconText>{item.name}</IconText>
+            <SubText>{item.desc}</SubText>
+          </Card>
+        </TouchableOpacity>
       )}
     />
   );

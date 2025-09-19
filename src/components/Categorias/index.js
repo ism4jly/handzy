@@ -65,7 +65,7 @@ export default function Categorias({ selectedCategory, onSelectCategory }) {
 
         return (
           <TouchableOpacity
-            onPress={() => onSelectCategory(item.name)}
+            onPress={() => onSelectCategory(item.categoryId)}
             style={{
               flex: 1,
             }}

@@ -108,7 +108,7 @@ function NewService() {
             <Picker.Item label="Limpeza" value="limpeza" />
             <Picker.Item label="Beleza" value="beleza" />
             <Picker.Item label="Educação" value="educacao" />
-            <Picker.Item label="Informática" value="ti" />
+            <Picker.Item label="Informática" value="informatica" />
             <Picker.Item label="Transporte" value="transporte" />
           </Picker>
 

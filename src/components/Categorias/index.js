@@ -1,11 +1,12 @@
 import React from 'react';
-import { FlatList, Touchable, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
 import { Card, IconContainer, IconText, SubText } from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 
 const data = [
   {
     id: '1',
+    categoryId: 'tecnico',
     name: 'Técnico',
     desc: 'Manutenção e reparo',
     icon: 'tool',
@@ -13,6 +14,7 @@ const data = [
   },
   {
     id: '2',
+    categoryId: 'limpeza',
     name: 'Limpeza',
     desc: 'Serviços de limpeza',
     icon: 'zap',
@@ -20,6 +22,7 @@ const data = [
   },
   {
     id: '3',
+    categoryId: 'informatica',
     name: 'Informática',
     desc: 'Serviços de informática',
     icon: 'cpu',
@@ -27,6 +30,7 @@ const data = [
   },
   {
     id: '4',
+    categoryId: 'beleza',
     name: 'Beleza',
     desc: 'Cabelo e estética',
     icon: 'scissors',
@@ -34,6 +38,7 @@ const data = [
   },
   {
     id: '5',
+    categoryId: 'educacao',
     name: 'Educação',
     desc: 'Aulas particulares',
     icon: 'book',
@@ -41,6 +46,7 @@ const data = [
   },
   {
     id: '6',
+    categoryId: 'transporte',
     name: 'Transporte',
     desc: 'Mudanças e fretes',
     icon: 'truck',
@@ -48,23 +54,37 @@ const data = [
   },
 ];
 
-export default function Categorias() {
+export default function Categorias({ selectedCategory, onSelectCategory }) {
   return (
     <FlatList
       data={data}
       numColumns={2}
       keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <TouchableOpacity>
-          <Card>
-            <IconContainer style={{ backgroundColor: item.color }}>
-              <Feather name={item.icon} size={22} color="#fff" />
-            </IconContainer>
-            <IconText>{item.name}</IconText>
-            <SubText>{item.desc}</SubText>
-          </Card>
-        </TouchableOpacity>
-      )}
+      renderItem={({ item }) => {
+        const isSelected = selectedCategory === item.categoryId;
+
+        return (
+          <TouchableOpacity
+            onPress={() => onSelectCategory(item.name)}
+            style={{
+              flex: 1,
+            }}
+          >
+            <Card
+              style={{
+                borderWidth: isSelected ? 2 : 0,
+                borderColor: isSelected ? item.color : 'transparent',
+              }}
+            >
+              <IconContainer style={{ backgroundColor: item.color }}>
+                <Feather name={item.icon} size={22} color="#fff" />
+              </IconContainer>
+              <IconText>{item.name}</IconText>
+              <SubText>{item.desc}</SubText>
+            </Card>
+          </TouchableOpacity>
+        );
+      }}
     />
   );
 }

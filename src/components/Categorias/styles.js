@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
 
 export const Card = styled.View`
-  flex: 1;
+  width: 50%;
+  min-width: 150px;
   background-color: #fff;
   margin: 8px;
   border-radius: 12px;
@@ -28,4 +29,6 @@ export const IconText = styled.Text`
 export const SubText = styled.Text`
   font-size: 14px;
   color: #6b7280;
+  text-align: center;
+  flex-wrap: wrap;
 `;

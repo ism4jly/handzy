@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useMemo } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -33,6 +33,7 @@ function Home() {
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -73,10 +74,25 @@ function Home() {
     }, []),
   );
 
+  // Função de clique na categoria
+  const handleCategoryPress = useCallback(categoryId => {
+    setSelectedCategory(prev => (prev === categoryId ? null : categoryId));
+  }, []);
+
+  // Filtrar serviços com base na categoria
+  const filteredServices = useMemo(() => {
+    if (!selectedCategory) return services;
+    return services.filter(
+      s =>
+        s.categoryId &&
+        s.categoryId.toLowerCase() === selectedCategory.toLowerCase(),
+    );
+  }, [services, selectedCategory]);
+
   return (
     <Container>
       <ListServices
-        data={loading ? [] : services}
+        data={loading ? [] : filteredServices}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <ServicesList data={item} userId={user?.uid} />
@@ -97,7 +113,10 @@ function Home() {
             </SearchContainer>
 
             <SectionTitle>Categorias</SectionTitle>
-            <Categorias />
+            <Categorias
+              selectedCategory={selectedCategory}
+              onSelectCategory={handleCategoryPress}
+            />
 
             <SectionTitle>Serviços</SectionTitle>
 

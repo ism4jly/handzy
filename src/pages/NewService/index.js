@@ -26,14 +26,14 @@ function NewService() {
   const { user } = useContext(AuthContext);
 
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [location, setLocation] = useState('');
 
   async function handleService() {
-    if (!title || !category || !description || !price) {
+    if (!title || !categoryId || !description || !price) {
       Alert.alert('Atenção', 'Preencha todos os campos obrigatórios.');
       return;
     }
@@ -55,7 +55,7 @@ function NewService() {
         created: new Date(),
         autor: user?.nome,
         title,
-        category,
+        categoryId,
         description,
         price,
         duration,
@@ -66,7 +66,7 @@ function NewService() {
       .then(() => {
         Alert.alert('Sucesso', 'Serviço cadastrado com sucesso!');
         setTitle('');
-        setCategory('');
+        setCategoryId('');
         setDescription('');
         setPrice('');
         setDuration('');
@@ -95,8 +95,8 @@ function NewService() {
 
           <Label>Categoria *</Label>
           <Picker
-            selectedValue={category}
-            onValueChange={itemValue => setCategory(itemValue)}
+            selectedValue={categoryId}
+            onValueChange={itemValue => setCategoryId(itemValue)}
             style={{
               backgroundColor: '#f3f4f6',
               borderRadius: 8,

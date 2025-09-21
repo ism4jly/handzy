@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback, useMemo } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../contexts/auth';
@@ -34,6 +34,7 @@ function Home() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -79,15 +80,29 @@ function Home() {
     setSelectedCategory(prev => (prev === categoryId ? null : categoryId));
   }, []);
 
-  // Filtrar serviços com base na categoria
+  // Filtrar serviços com base na categoria + busca
   const filteredServices = useMemo(() => {
-    if (!selectedCategory) return services;
-    return services.filter(
-      s =>
-        s.categoryId &&
-        s.categoryId.toLowerCase() === selectedCategory.toLowerCase(),
-    );
-  }, [services, selectedCategory]);
+    let results = services;
+
+    if (selectedCategory) {
+      results = results.filter(
+        s =>
+          s.categoryId &&
+          s.categoryId.toLowerCase() === selectedCategory.toLowerCase(),
+      );
+    }
+
+    if (searchTerm.trim() !== '') {
+      const term = searchTerm.toLowerCase();
+      results = results.filter(
+        s =>
+          (s.title && s.title.toLowerCase().includes(term)) ||
+          (s.desc && s.desc.toLowerCase().includes(term)),
+      );
+    }
+
+    return results;
+  }, [services, selectedCategory, searchTerm]);
 
   return (
     <Container>
@@ -109,24 +124,40 @@ function Home() {
               <SearchInput
                 placeholder="Buscar serviços..."
                 placeholderTextColor="#9ca3af"
+                value={searchTerm}
+                onChangeText={text => setSearchTerm(text)}
               />
             </SearchContainer>
 
-            <SectionTitle>Categorias</SectionTitle>
-            <Categorias
-              selectedCategory={selectedCategory}
-              onSelectCategory={handleCategoryPress}
-            />
+            {/* Só exibe categorias se não houver busca */}
+            {searchTerm.trim() === '' && (
+              <>
+                <SectionTitle>Categorias</SectionTitle>
+                <Categorias
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={handleCategoryPress}
+                />
+              </>
+            )}
 
             <SectionTitle>Serviços</SectionTitle>
 
-            {/* Loading aparece logo após "Serviços" */}
             {loading && (
               <View style={{ padding: 20, alignItems: 'center' }}>
                 <ActivityIndicator size={40} color="#111827" />
               </View>
             )}
           </>
+        }
+        // Mensagem se não encontrar serviços
+        ListEmptyComponent={
+          !loading && (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, color: '#6b7280' }}>
+                Nenhum serviço encontrado
+              </Text>
+            </View>
+          )
         }
         ListFooterComponent={<View style={{ height: 120 }} />}
         showsVerticalScrollIndicator={false}

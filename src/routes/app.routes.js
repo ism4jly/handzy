@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Search from '../pages/Search';
 import NewService from '../pages/NewService';
+import ServiceDetails from '../pages/ServiceDetails';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -25,6 +26,18 @@ function StackRoutes() {
         component={NewService}
         options={{
           title: 'Criar serviço',
+          headerTintColor: '#111827',
+          headerStyle: {
+            backgroundColor: '#e5e7eb',
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="ServiceDetails"
+        component={ServiceDetails}
+        options={{
+          title: 'Detalhes do serviço',
           headerTintColor: '#111827',
           headerStyle: {
             backgroundColor: '#e5e7eb',

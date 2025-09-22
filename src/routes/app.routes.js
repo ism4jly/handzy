@@ -5,7 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
-import Search from '../pages/Search';
+import Appointments from '../pages/Appointments';
 import NewService from '../pages/NewService';
 import ServiceDetails from '../pages/ServiceDetails';
 
@@ -78,7 +78,7 @@ function AppRoutes() {
 
       <Tab.Screen
         name="Agendamentos"
-        component={Search}
+        component={Appointments}
         options={{
           tabBarLabel: 'Agendamentos',
           tabBarIcon: ({ color, size }) => (

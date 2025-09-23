@@ -1,4 +1,8 @@
 import React, { useContext, useState } from 'react';
+import { Alert, Modal, Platform } from 'react-native';
+
+import firestore from '@react-native-firebase/firestore';
+
 import {
   Container,
   Title,
@@ -21,13 +25,12 @@ import {
   ButtonModal,
 } from './styles';
 import Icon from 'react-native-vector-icons/Feather';
-import { Alert, Modal, Platform } from 'react-native';
 
 import { AuthContext } from '../../contexts/auth';
 import { ButtonText } from '../Login/styles';
 
 function Profile() {
-  const { signOut, user } = useContext(AuthContext);
+  const { signOut, user, setUser, storageUser } = useContext(AuthContext);
 
   const [nome, setNome] = useState(user?.nome);
   const [open, setOpen] = useState(false);
@@ -44,7 +47,36 @@ function Profile() {
   }
 
   async function updateProfile() {
-    alert('teste');
+    if (nome === '') {
+      return;
+    }
+
+    await firestore().collection('users').doc(user.uid).update({
+      nome: nome,
+    });
+
+    //Buscar todos os serviços do usuário e atualizar o nome
+    const servicesDocs = await firestore()
+      .collection('services')
+      .where('userId', '==', user?.uid)
+      .get();
+
+    //Percorrer todos serviços desse user e atualizar o nome
+    servicesDocs.forEach(async doc => {
+      await firestore().collection('services').doc(doc.id).update({
+        autor: nome,
+      });
+    });
+
+    let data = {
+      uid: user?.uid,
+      nome: nome,
+      email: user?.email,
+    };
+
+    setUser(data);
+    storageUser(data);
+    setOpen(false);
   }
 
   return (
@@ -90,7 +122,7 @@ function Profile() {
             onChangeText={text => setNome(text)}
           />
 
-          <ButtonModal onPress={updateProfile}>
+          <ButtonModal onPress={() => updateProfile()}>
             <ButtonText color="#FFF">Salvar</ButtonText>
           </ButtonModal>
         </ModalContainer>

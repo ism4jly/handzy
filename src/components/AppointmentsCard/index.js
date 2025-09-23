@@ -16,13 +16,15 @@ export default function AppointmentCard({ data, onReschedule, onCancel }) {
   const getStatusColor = status => {
     switch (status) {
       case 'pending':
-        return '#facc15'; // amarelo
+        return '#facc15';
+      case 'accepted':
+        return '#3b82f6';
       case 'completed':
-        return '#22c55e'; // verde
+        return '#22c55e';
       case 'canceled':
-        return '#ef4444'; // vermelho
+        return '#ef4444';
       default:
-        return '#9ca3af'; // cinza
+        return '#9ca3af';
     }
   };
 
@@ -30,6 +32,8 @@ export default function AppointmentCard({ data, onReschedule, onCancel }) {
     switch (status) {
       case 'pending':
         return 'Pendente';
+      case 'accepted':
+        return 'Aceito';
       case 'completed':
         return 'Concluído';
       case 'canceled':
@@ -39,12 +43,11 @@ export default function AppointmentCard({ data, onReschedule, onCancel }) {
     }
   };
 
-  // Firestore salva Timestamp, precisa converter
+  // Firestore salva Timestamp
   const scheduledDate = data.scheduledAt
     ? new Date(data.scheduledAt.seconds * 1000)
     : null;
 
-  // Atualizar status no Firestore
   const handleUpdateStatus = async newStatus => {
     try {
       await firestore()
@@ -91,21 +94,38 @@ export default function AppointmentCard({ data, onReschedule, onCancel }) {
 
       {data.service?.price && <Price>R$ {data.service.price}</Price>}
 
+      {/* Ações baseadas no status */}
       {data.status === 'pending' && (
         <Row style={{ marginTop: 10, justifyContent: 'flex-end' }}>
           <TouchableOpacity
-            onPress={onReschedule}
+            onPress={() => handleUpdateStatus('accepted')}
             style={{
-              backgroundColor: '#e0e7ff',
+              backgroundColor: '#3b82f6',
               paddingHorizontal: 12,
               paddingVertical: 6,
               borderRadius: 8,
               marginRight: 8,
             }}
           >
-            <Text style={{ color: '#1e3a8a' }}>Reagendar</Text>
+            <Text style={{ color: '#fff' }}>Aceitar</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            onPress={() => handleUpdateStatus('canceled')}
+            style={{
+              backgroundColor: '#ef4444',
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: '#fff' }}>Cancelar</Text>
+          </TouchableOpacity>
+        </Row>
+      )}
+
+      {data.status === 'accepted' && (
+        <Row style={{ marginTop: 10, justifyContent: 'flex-end' }}>
           <TouchableOpacity
             onPress={() => handleUpdateStatus('completed')}
             style={{
@@ -120,7 +140,7 @@ export default function AppointmentCard({ data, onReschedule, onCancel }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={onCancel}
+            onPress={() => handleUpdateStatus('canceled')}
             style={{
               backgroundColor: '#ef4444',
               paddingHorizontal: 12,

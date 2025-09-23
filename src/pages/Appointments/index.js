@@ -10,6 +10,7 @@ export default function Appointments() {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'pendentes', title: 'Pendentes' },
+    { key: 'aceitos', title: 'Aceitos' },
     { key: 'concluidos', title: 'Concluídos' },
     { key: 'cancelados', title: 'Cancelados' },
   ]);
@@ -19,7 +20,7 @@ export default function Appointments() {
 
     const unsubscribe = firestore()
       .collection('appointments')
-      .where('providerId', '==', currentUserId) // só agendamentos do profissional
+      .where('providerId', '==', currentUserId)
       .onSnapshot(async snapshot => {
         const list = [];
 
@@ -73,6 +74,7 @@ export default function Appointments() {
 
   const renderScene = SceneMap({
     pendentes: () => renderList('pending'),
+    aceitos: () => renderList('accepted'),
     concluidos: () => renderList('completed'),
     cancelados: () => renderList('canceled'),
   });

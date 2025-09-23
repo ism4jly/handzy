@@ -104,3 +104,42 @@ export const ButtonLogoutText = styled.Text`
   font-size: 14px;
   font-weight: 500;
 `;
+
+export const ModalContainer = styled.KeyboardAvoidingView`
+  width: 100%;
+  height: 70%;
+  background-color: #202020;
+  position: absolute;
+  bottom: 0;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ButtonBack = styled.TouchableOpacity`
+  position: absolute;
+  top: 15px;
+  left: 25px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const Input = styled.TextInput`
+  background-color: #ddd;
+  width: 90%;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 18px;
+  color: #121212;
+  text-align: center;
+`;
+
+export const ButtonModal = styled.TouchableOpacity`
+  background-color: #3b82f6;
+  width: 80%;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 10px;
+  align-items: center;
+`;

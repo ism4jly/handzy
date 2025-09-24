@@ -39,7 +39,8 @@ function AuthProvider({ children }) {
     loadStorage();
   }, []);
 
-  async function signUp(email, password, name) {
+  // Agora recebe phone também
+  async function signUp(email, password, name, phone) {
     setLoadingAuth(true);
 
     try {
@@ -48,12 +49,15 @@ function AuthProvider({ children }) {
 
       await setDoc(doc(db, 'users', uid), {
         nome: name,
+        telefone: phone,
+        email: value.user.email,
         createdAt: new Date(),
       });
 
       let data = {
         uid: uid,
         nome: name,
+        telefone: phone,
         email: value.user.email,
       };
 
@@ -78,6 +82,7 @@ function AuthProvider({ children }) {
       let data = {
         uid: uid,
         nome: userProfile.data().nome,
+        telefone: userProfile.data().telefone || '', // garante que não quebre
         email: value.user.email,
       };
 

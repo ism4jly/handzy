@@ -3,6 +3,7 @@ import { ActivityIndicator } from 'react-native';
 
 import {
   Container,
+  Card,
   Title,
   Subtitle,
   Input,
@@ -13,6 +14,8 @@ import {
   SignUpContainer,
   SignUpText,
   SignUpLink,
+  LogoImage,
+  AppName,
 } from './styles';
 
 import { AuthContext } from '../../contexts/auth';
@@ -21,6 +24,7 @@ export default function Login() {
   const [login, setLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const { signUp, signIn, loadingAuth } = useContext(AuthContext);
 
@@ -28,6 +32,7 @@ export default function Login() {
     setLogin(!login);
     setName('');
     setEmail('');
+    setPhone('');
     setPassword('');
   }
 
@@ -36,98 +41,79 @@ export default function Login() {
       alert('Preencha todos os campos');
       return;
     }
-
     await signIn(email, password);
   }
 
   async function handleSignUp() {
-    if (name === '' || email === '' || password === '') {
+    if (name === '' || email === '' || phone === '' || password === '') {
       alert('Preencha todos os campos');
       return;
     }
-
-    await signUp(email, password, name);
+    // Envia também o telefone no cadastro
+    await signUp(email, password, name, phone);
   }
 
-  if (login) {
-    return (
-      <Container>
-        <Title>Handzy</Title>
-        <Subtitle>Acesse sua conta para continuar</Subtitle>
+  return (
+    <Container>
+      <Card>
+        <LogoImage
+          source={require('../../assets/logo.png')}
+          resizeMode="contain"
+        />
+        <AppName>Handzy</AppName>
+
+        {!login && (
+          <>
+            <Input
+              placeholder="Nome completo"
+              autoCapitalize="words"
+              value={name}
+              onChangeText={text => setName(text)}
+            />
+            <Input
+              placeholder="Telefone (11) 99999-9999"
+              keyboardType="phone-pad"
+              value={phone}
+              onChangeText={text => setPhone(text)}
+            />
+          </>
+        )}
 
         <Input
           placeholder="Email"
-          placeholderTextColor="#fff"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={text => setEmail(text)}
         />
+
         <Input
           placeholder="Senha"
-          placeholderTextColor="#fff"
-          secureTextEntry
+          secureTextEntry={true}
           autoCapitalize="none"
           value={password}
           onChangeText={text => setPassword(text)}
         />
 
-        <Button onPress={handleSignIn}>
+        <Button onPress={login ? handleSignIn : handleSignUp}>
           {loadingAuth ? (
             <ActivityIndicator size={20} color="#FFF" />
           ) : (
-            <ButtonText>Entrar</ButtonText>
+            <ButtonText>{login ? 'Entrar' : 'Cadastrar'}</ButtonText>
           )}
         </Button>
 
-        <SignUpContainer>
-          <SignUpText>Não tem uma conta?</SignUpText>
-          <SignUpLink onPress={toggleLogin}>Criar conta</SignUpLink>
-        </SignUpContainer>
-      </Container>
-    );
-  }
-
-  return (
-    <Container>
-      <Title>Handzy</Title>
-      <Subtitle>Cadastre sua conta para continuar</Subtitle>
-
-      <Input
-        placeholder="Seu nome"
-        placeholderTextColor="#fff"
-        autoCapitalize="none"
-        value={name}
-        onChangeText={text => setName(text)}
-      />
-      <Input
-        placeholder="Email"
-        placeholderTextColor="#fff"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={text => setEmail(text)}
-      />
-      <Input
-        placeholder="Senha"
-        placeholderTextColor="#fff"
-        secureTextEntry
-        autoCapitalize="none"
-        value={password}
-        onChangeText={text => setPassword(text)}
-      />
-
-      <Button onPress={handleSignUp}>
-        {loadingAuth ? (
-          <ActivityIndicator size={20} color="#FFF" />
+        {login ? (
+          <SignUpContainer>
+            <SignUpText>Não tem uma conta?</SignUpText>
+            <SignUpLink onPress={toggleLogin}> Cadastre-se</SignUpLink>
+          </SignUpContainer>
         ) : (
-          <ButtonText>Cadastrar</ButtonText>
+          <Link onPress={toggleLogin}>
+            <LinkText>Já possui uma conta? Faça login</LinkText>
+          </Link>
         )}
-      </Button>
-
-      <Link>
-        <LinkText onPress={toggleLogin}>Já possuo uma conta</LinkText>
-      </Link>
+      </Card>
     </Container>
   );
 }
